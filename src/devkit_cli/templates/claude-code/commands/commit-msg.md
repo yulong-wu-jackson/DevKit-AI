@@ -53,7 +53,7 @@ Format: `<type>(<scope>): <subject>`
 
 ## Output
 
-Provide the commit message ready to commit:
+Provide **only** the commit message ready to commit, should not include other text before or after the final message:
 - First line: type and subject (concise)
 - Optional: blank line + bullet points for details
 - Be specific enough to understand the change, but concise enough to scan, should not be cumbersome
