@@ -1,7 +1,9 @@
 """Core template management logic for DevKit CLI."""
 
+import json
 from pathlib import Path
-from devkit_cli.config import TEMPLATES_DIR, TEMPLATE_SUBDIRS
+from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
+from devkit_cli.config import TEMPLATES_DIR, TEMPLATE_SUBDIRS, UI_THEME
 from devkit_cli.models import Agent, InstallResult
 from devkit_cli.utils import (
     ensure_directory,
@@ -112,13 +114,27 @@ class TemplateManager:
         # Ensure agent folder exists
         ensure_directory(agent_folder)
 
-        # Copy all template files
+        # Copy all template files with progress indicator
         files_copied = []
-        for rel_path in template_files:
-            source_file = self.template_path / rel_path
-            dest_file = agent_folder / rel_path
-            copy_file(source_file, dest_file)
-            files_copied.append(rel_path)
+
+        with Progress(
+            SpinnerColumn(style=UI_THEME["primary"]),
+            TextColumn("[bold {color}]{{task.description}}[/bold {color}]".format(color=UI_THEME["primary"])),
+            BarColumn(complete_style=UI_THEME["success"], finished_style=UI_THEME["success"]),
+            TaskProgressColumn(),
+            transient=True  # Remove progress bar when done
+        ) as progress:
+            task = progress.add_task("Installing templates", total=len(template_files))
+
+            for rel_path in template_files:
+                source_file = self.template_path / rel_path
+                dest_file = agent_folder / rel_path
+                copy_file(source_file, dest_file)
+                files_copied.append(rel_path)
+                progress.update(task, advance=1)
+
+        # Configure hooks in settings.local.json
+        self._configure_hooks(agent_folder)
 
         # Build result message
         message = self._build_result_message(
@@ -134,6 +150,72 @@ class TemplateManager:
             conflicts=conflicts,
             message=message,
         )
+
+    def _configure_hooks(self, agent_folder: Path) -> None:
+        """
+        Configure hooks in settings.local.json.
+        
+        Creates or merges hooks configuration into the settings file.
+        
+        Args:
+            agent_folder: Path to the agent folder (e.g., .claude/)
+        """
+        settings_file = agent_folder / "settings.local.json"
+        
+        # Define the hooks configuration
+        hooks_config = {
+            "hooks": {
+                "SessionStart": [
+                    {
+                        "hooks": [
+                            {
+                                "type": "command",
+                                "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/welcome-banner.sh",
+                                "timeout": 5
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+        
+        # Load existing settings if file exists
+        if settings_file.exists():
+            try:
+                with open(settings_file, 'r', encoding='utf-8') as f:
+                    existing_settings = json.load(f)
+            except (json.JSONDecodeError, IOError):
+                # If file is corrupted or empty, start fresh
+                existing_settings = {}
+        else:
+            existing_settings = {}
+        
+        # Merge hooks configuration
+        if "hooks" not in existing_settings:
+            existing_settings["hooks"] = {}
+        
+        # Merge SessionStart hooks
+        if "SessionStart" not in existing_settings["hooks"]:
+            existing_settings["hooks"]["SessionStart"] = hooks_config["hooks"]["SessionStart"]
+        else:
+            # Append to existing SessionStart hooks if not already present
+            existing_hooks = existing_settings["hooks"]["SessionStart"]
+            new_hook = hooks_config["hooks"]["SessionStart"][0]
+            
+            # Check if this exact hook already exists
+            hook_exists = any(
+                h.get("hooks", [{}])[0].get("command") == new_hook["hooks"][0]["command"]
+                for h in existing_hooks
+                if isinstance(h, dict) and "hooks" in h
+            )
+            
+            if not hook_exists:
+                existing_hooks.append(new_hook)
+        
+        # Write back to file
+        with open(settings_file, 'w', encoding='utf-8') as f:
+            json.dump(existing_settings, f, indent=2, ensure_ascii=False)
+            f.write('\n')  # Add trailing newline
 
     def _build_result_message(
         self,
