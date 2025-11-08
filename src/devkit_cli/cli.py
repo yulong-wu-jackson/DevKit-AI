@@ -35,6 +35,8 @@ def main_callback(ctx: typer.Context) -> None:
 
             if action == "init":
                 init(project_name=None, here=False, claude=False, cursor=False)
+                # Exit after init completes, don't return to menu
+                break
             elif action == "version":
                 show_version(__version__)
                 console.input(f"\n[{UI_THEME['text_hint']}]Press Enter to continue...[/{UI_THEME['text_hint']}]")
