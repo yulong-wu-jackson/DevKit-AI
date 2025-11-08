@@ -1,6 +1,33 @@
-# DevKit-AI
+<div align="center">
 
-A lightweight CLI tool to bootstrap AI coding agent templates for your development projects.
+```
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║     ██████╗ ███████╗██╗   ██╗██╗  ██╗██╗████████╗      █████╗ ██╗           ║
+║     ██╔══██╗██╔════╝██║   ██║██║ ██╔╝██║╚══██╔══╝     ██╔══██╗██║           ║
+║     ██║  ██║█████╗  ██║   ██║█████╔╝ ██║   ██║  █████╗███████║██║           ║
+║     ██║  ██║██╔══╝  ╚██╗ ██╔╝██╔═██╗ ██║   ██║  ╚════╝██╔══██║██║           ║
+║     ██████╔╝███████╗ ╚████╔╝ ██║  ██╗██║   ██║        ██║  ██║██║           ║
+║     ╚═════╝ ╚══════╝  ╚═══╝  ╚═╝  ╚═╝╚═╝   ╚═╝        ╚═╝  ╚═╝╚═╝           ║
+║                                                                              ║
+║            🚀 Bootstrap AI Coding Agent Templates Instantly 🚀               ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+```
+
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Built with Typer](https://img.shields.io/badge/CLI-Typer-brightgreen.svg)](https://typer.tiangolo.com/)
+[![Built with Rich](https://img.shields.io/badge/UI-Rich-blue.svg)](https://rich.readthedocs.io/)
+[![GitHub Stars](https://img.shields.io/github/stars/yulong-wu-jackson/DevKit-AI?style=social)](https://github.com/yulong-wu-jackson/DevKit-AI/stargazers)
+
+**A lightweight CLI tool to bootstrap AI coding agent templates for your development projects.**
+
+[Quick Start](#quick-start) • [Installation](#installation) • [Commands](#commands) • [Future Design](design)
+
+---
+
+</div>
 
 ## Overview
 
@@ -161,8 +188,8 @@ Once installed, you can use the agents and commands in your AI coding tool:
 ### Using with Claude Code
 
 ```bash
-# In your project directory with .claude/ folder
-claude code
+# Launch your Claude Code in your project directory with .claude/ folder
+claude
 
 # Use the feature-dev workflow
 /feature-dev Implement user authentication
