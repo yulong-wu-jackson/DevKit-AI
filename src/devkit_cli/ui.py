@@ -277,7 +277,7 @@ def show_main_menu() -> str | None:
             else:
                 console.print(f"  {prefix} [{UI_THEME['text_secondary']}]{label}[/{UI_THEME['text_secondary']}]")
 
-        console.print(f"\n[{UI_THEME['text_hint']}]Use ↑↓ arrows to navigate, Enter to select, ESC to exit[/{UI_THEME['text_hint']}]")
+        console.print(f"\n[{UI_THEME['text_hint']}]Use ↑↓ arrows to navigate, Enter to select, ctrl+c to exit[/{UI_THEME['text_hint']}]")
 
         key = readchar.readkey()
 

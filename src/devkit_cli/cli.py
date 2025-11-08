@@ -30,19 +30,21 @@ def main_callback(ctx: typer.Context) -> None:
         ctx: Typer context
     """
     if ctx.invoked_subcommand is None:
-        action = show_main_menu()
+        while True:
+            action = show_main_menu()
 
-        if action == "init":
-            init(project_name=None, here=False, claude=False, cursor=False)
-        elif action == "version":
-            show_version(__version__)
-            console.input(f"\n[{UI_THEME['text_hint']}]Press Enter to continue...[/{UI_THEME['text_hint']}]")
-        elif action == "exit":
-            console.print(f"[{UI_THEME['text_hint']}]Goodbye![/{UI_THEME['text_hint']}]\n")
-            sys.exit(0)
-        elif action is None:
-            # User cancelled
-            sys.exit(0)
+            if action == "init":
+                init(project_name=None, here=False, claude=False, cursor=False)
+            elif action == "version":
+                show_version(__version__)
+                console.input(f"\n[{UI_THEME['text_hint']}]Press Enter to continue...[/{UI_THEME['text_hint']}]")
+                # Loop continues to show main menu again
+            elif action == "exit":
+                console.print(f"[{UI_THEME['text_hint']}]Goodbye![/{UI_THEME['text_hint']}]\n")
+                sys.exit(0)
+            elif action is None:
+                # User cancelled
+                sys.exit(0)
 
 
 @app.command()
