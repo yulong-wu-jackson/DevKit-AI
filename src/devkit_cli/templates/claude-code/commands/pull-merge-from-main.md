@@ -4,7 +4,7 @@ description: Pull and merge the updates from remote main, solve the conflict gra
 
 Please pull the latest code from the remote main and merge safely to my local feature branch, give a brief description on what have
   changed and say if that will affect the current implementation of the current feature branch.
-  please make sure you understanding the codebase fully if there is conflict need to be solve, and you need to ask user for permission
+  please make sure you understanding the codebase fully (and understand the code differences between current branch and the main branch) if there is conflict need to be solve, and you need to ask user for permission
   before solving conflict.\
   before you start merging you should invoke multiple agents to explore and review the changes to see if it will affect the current
   implementation (see current implementtation will use any of the changed parts and see if it will affect us)
