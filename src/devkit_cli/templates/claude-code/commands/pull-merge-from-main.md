@@ -10,3 +10,5 @@ Please pull the latest code from the remote main and merge safely to my local fe
   implementation (see current implementtation will use any of the changed parts and see if it will affect us)
 
   Don't take the results from the subagents as granted, think critically, please do cross verification your self and explore more related files if needed.
+
+  for the merge commit message don't claim your auther ship in the message, please just include the essential merge message.
