@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Paper Deep Dive - Interactive Documentation</title>
+
+  <!-- Fonts: Space Mono + Lora -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+  <style>
+    /* ===== CSS VARIABLES ===== */
+    :root[data-theme="dark"] {
+      --bg-primary: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-tertiary: #1f2937;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --accent: #00e5ff;
+      --accent-secondary: #ff006e;
+      --accent-rgb: 0, 229, 255;
+      --border: #30363d;
+      --success: #3fb950;
+      --warning: #d29922;
+    }
+
+    :root[data-theme="light"] {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f6f8fa;
+      --bg-tertiary: #eef2f6;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --accent: #0969da;
+      --accent-secondary: #d1242f;
+      --accent-rgb: 9, 105, 218;
+      --border: #d0d7de;
+      --success: #1a7f37;
+      --warning: #9a6700;
+    }
+
+    /* ===== RESET & GLOBALS ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Lora', serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ===== TYPOGRAPHY ===== */
+    h1 {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    h2 {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      position: relative;
+      padding-bottom: 0.75rem;
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 50px;
+      height: 3px;
+      background: var(--accent);
+    }
+
+    h3 {
+      font-family: 'Lora', serif;
+      font-size: clamp(1.125rem, 3vw, 1.5rem);
+      font-weight: 600;
+      margin: 2rem 0 1rem;
+    }
+
+    p {
+      font-size: 1.0625rem;
+      margin-bottom: 1.25rem;
+      color: var(--text-secondary);
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9em;
+      background: rgba(var(--accent-rgb), 0.1);
+      padding: 0.2em 0.5em;
+      border-radius: 4px;
+      color: var(--accent);
+    }
+
+    /* ===== HERO SECTION ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(circle at 30% 40%, rgba(var(--accent-rgb), 0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 60%, rgba(255, 0, 110, 0.1) 0%, transparent 50%),
+                  var(--bg-primary);
+    }
+
+    .hero-content {
+      text-align: center;
+      z-index: 2;
+      max-width: 900px;
+      padding: 2rem;
+    }
+
+    .hero-title {
+      background: linear-gradient(135deg, var(--text-primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    .hero-subtitle {
+      font-family: 'Lora', serif;
+      font-size: clamp(1.25rem, 3vw, 1.75rem);
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      animation: fadeInUp 0.8s ease-out 0.2s backwards;
+    }
+
+    .achievement-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--bg-primary);
+      padding: 0.75rem 1.5rem;
+      border-radius: 50px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      animation: fadeInUp 0.8s ease-out 0.4s backwards;
+    }
+
+    .scroll-indicator {
+      margin-top: 4rem;
+      font-size: 2rem;
+      color: var(--accent);
+      animation: bounce 2s infinite;
+    }
+
+    /* ===== MAIN LAYOUT ===== */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 3rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    @media (max-width: 1024px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        height: 100vh;
+        background: var(--bg-secondary);
+        z-index: 100;
+        transition: left 0.3s;
+      }
+
+      .sidebar.open {
+        left: 0;
+      }
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      position: sticky;
+      top: 2rem;
+      height: fit-content;
+      max-height: calc(100vh - 4rem);
+      overflow-y: auto;
+    }
+
+    .nav-section {
+      margin-bottom: 2rem;
+    }
+
+    .nav-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+    }
+
+    .nav-list {
+      list-style: none;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 0.5rem 0;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9375rem;
+      position: relative;
+      transition: color 0.2s;
+    }
+
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      left: -1rem;
+      top: 50%;
+      transform: translateY(-50%) scaleY(0);
+      height: 70%;
+      width: 2px;
+      background: var(--accent);
+      transition: transform 0.3s;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--text-primary);
+    }
+
+    .nav-link.active::before {
+      transform: translateY(-50%) scaleY(1);
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .progress-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    /* ===== CONTENT SECTIONS ===== */
+    .content-section {
+      margin-bottom: 4rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .content-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .content-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .content-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--accent);
+    }
+
+    /* ===== CODE BLOCKS ===== */
+    .code-block {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin: 1.5rem 0;
+      overflow: hidden;
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      background: rgba(var(--accent-rgb), 0.05);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .language-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .copy-button {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 0.375rem 0.875rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-button:hover {
+      background: var(--accent);
+      color: var(--bg-primary);
+    }
+
+    .copy-button.copied {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    pre[class*="language-"] {
+      margin: 0;
+      padding: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    /* ===== ASCII DIAGRAMS ===== */
+    .diagram-wrapper {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+      position: relative;
+      cursor: zoom-in;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .diagram-wrapper:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(var(--accent-rgb), 0.15);
+    }
+
+    .diagram-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .ascii-diagram {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8125rem;
+      line-height: 1.4;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .diagram-caption {
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* ===== RESULTS TABLE ===== */
+    .results-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 2rem 0;
+    }
+
+    .results-table th {
+      background: var(--bg-tertiary);
+      padding: 1rem;
+      text-align: left;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .results-table td {
+      padding: 0.875rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .results-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .results-table tr:hover {
+      background: rgba(var(--accent-rgb), 0.05);
+    }
+
+    .highlight-value {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 1.125rem;
+    }
+
+    /* ===== SEARCH ===== */
+    .search-container {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: 'Lora', serif;
+      font-size: 0.9375rem;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.1);
+    }
+
+    /* ===== THEME TOGGLE ===== */
+    .theme-toggle {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      width: 50px;
+      height: 50px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      z-index: 100;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .theme-toggle:hover {
+      transform: rotate(180deg);
+      box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.3);
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -1000px 0; }
+      100% { background-position: 1000px 0; }
+    }
+
+    /* ===== MODAL ===== */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+      position: relative;
+      z-index: 1;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      max-width: 90vw;
+      max-height: 90vh;
+      padding: 2rem;
+      overflow: auto;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 40px;
+      height: 40px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: var(--accent);
+      color: var(--bg-primary);
+      transform: rotate(90deg);
+    }
+
+    /* ===== UTILITY CLASSES ===== */
+    .text-accent { color: var(--accent); }
+    .text-success { color: var(--success); }
+    .text-warning { color: var(--warning); }
+    .font-mono { font-family: 'Space Mono', monospace; }
+
+    /* ===== PRINT STYLES ===== */
+    @media print {
+      .sidebar, .theme-toggle, .scroll-indicator { display: none; }
+      .content-section { opacity: 1 !important; }
+      .main-layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Theme Toggle -->
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+    <span class="theme-icon">🌙</span>
+  </button>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">[PAPER TITLE]</h1>
+      <p class="hero-subtitle">[PAPER SUBTITLE OR KEY CONCEPT]</p>
+      <div style="margin: 2rem 0;">
+        <span class="achievement-badge">[KEY ACHIEVEMENT]</span>
+      </div>
+      <p style="margin-top: 1.5rem; color: var(--text-secondary);">
+        Authors: [AUTHORS]
+      </p>
+      <div class="scroll-indicator">↓</div>
+    </div>
+  </section>
+
+  <!-- Main Layout -->
+  <div class="main-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="nav-section">
+        <div class="nav-title">Navigation</div>
+        <ul class="nav-list">
+          <li><a href="#summary" class="nav-link">Executive Summary</a></li>
+          <li><a href="#architecture" class="nav-link">System Architecture</a></li>
+          <li><a href="#pipeline" class="nav-link">Pipeline</a></li>
+          <li><a href="#example" class="nav-link">Example</a></li>
+          <li><a href="#results" class="nav-link">Results</a></li>
+          <!-- Add more sections -->
+        </ul>
+      </div>
+
+      <div class="search-container">
+        <input type="text" id="search" class="search-input" placeholder="Search...">
+      </div>
+
+      <div class="progress-container">
+        <div class="nav-title">Progress</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+      <!-- Section Example -->
+      <section id="summary" class="content-section">
+        <h2>Executive Summary</h2>
+        <div class="content-card">
+          <p>[SUMMARY CONTENT]</p>
+        </div>
+      </section>
+
+      <section id="architecture" class="content-section">
+        <h2>System Architecture</h2>
+        <div class="content-card">
+          <h3>Core Components</h3>
+          <div class="diagram-wrapper" onclick="zoomDiagram(this)">
+            <div class="diagram-label">Architecture Overview</div>
+            <pre class="ascii-diagram">
+[ASCII DIAGRAM HERE]
+            </pre>
+            <div class="diagram-caption">Click to enlarge | From paper Figure 1</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="code-example" class="content-section">
+        <h2>Code Example</h2>
+        <div class="content-card">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="language-label">Python</span>
+              <button class="copy-button" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-python">
+# Example code from paper
+def example_function():
+    return "implementation"
+            </code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="results" class="content-section">
+        <h2>Key Results</h2>
+        <div class="content-card">
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Baseline</th>
+                <th>Proposed</th>
+                <th>Improvement</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Performance</td>
+                <td>100%</td>
+                <td class="highlight-value">123%</td>
+                <td class="text-success">+23%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Diagram Zoom Modal -->
+  <div id="diagram-modal" class="modal">
+    <div class="modal-backdrop" onclick="closeModal()"></div>
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <div id="modal-diagram"></div>
+    </div>
+  </div>
+
+  <!-- Syntax Highlighting -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+  <!-- Main Script -->
+  <script>
+    // Theme Toggle
+    const toggleTheme = () => {
+      const root = document.documentElement;
+      const current = root.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      document.querySelector('.theme-icon').textContent = next === 'dark' ? '🌙' : '☀️';
+    };
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      document.querySelector('.theme-icon').textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+    }
+
+    // Scroll Spy Navigation
+    const observeIntersection = () => {
+      const sections = document.querySelectorAll('.content-section[id]');
+      const navLinks = document.querySelectorAll('.nav-link');
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            navLinks.forEach(link => link.classList.remove('active'));
+            const activeLink = document.querySelector(`[href="#${entry.target.id}"]`);
+            if (activeLink) activeLink.classList.add('active');
+
+            // Update progress
+            const index = Array.from(sections).indexOf(entry.target);
+            const progress = ((index + 1) / sections.length) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+          }
+        });
+      }, { threshold: 0.5 });
+
+      sections.forEach(section => observer.observe(section));
+    };
+
+    // Scroll Reveal Animation
+    const observeScrollReveal = () => {
+      const sections = document.querySelectorAll('.content-section');
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1 });
+
+      sections.forEach(section => revealObserver.observe(section));
+    };
+
+    // Copy Code
+    const copyCode = (button) => {
+      const codeBlock = button.closest('.code-block');
+      const code = codeBlock.querySelector('code').textContent;
+      navigator.clipboard.writeText(code);
+
+      button.textContent = 'Copied!';
+      button.classList.add('copied');
+      setTimeout(() => {
+        button.textContent = 'Copy';
+        button.classList.remove('copied');
+      }, 2000);
+    };
+
+    // Zoom Diagram
+    const zoomDiagram = (element) => {
+      const modal = document.getElementById('diagram-modal');
+      const modalDiagram = document.getElementById('modal-diagram');
+      modalDiagram.innerHTML = element.innerHTML;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    };
+
+    const closeModal = () => {
+      const modal = document.getElementById('diagram-modal');
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    };
+
+    // Search Functionality
+    const implementSearch = () => {
+      const searchInput = document.getElementById('search');
+      const sections = document.querySelectorAll('.content-section');
+
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+
+        if (query.length < 2) {
+          sections.forEach(s => s.style.display = 'block');
+          return;
+        }
+
+        sections.forEach(section => {
+          const text = section.textContent.toLowerCase();
+          section.style.display = text.includes(query) ? 'block' : 'none';
+        });
+      });
+    };
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        document.getElementById('search').focus();
+      }
+    });
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', () => {
+      observeIntersection();
+      observeScrollReveal();
+      implementSearch();
+    });
+  </script>
+</body>
+</html>

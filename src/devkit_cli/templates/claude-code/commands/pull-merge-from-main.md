@@ -11,4 +11,6 @@ Please pull the latest code from the remote main and merge safely to my local fe
 
   Don't take the results from the subagents as granted, think critically, please do cross verification your self and explore more related files if needed.
 
+  For teh trategy to resolve conflict, you should look at what changes we have done to the current branch and think hard on how should you gracefully integrate the incomming main branch updates to our changed structure.
+
   for the merge commit message don't claim your auther ship in the message, please just include the essential merge message.

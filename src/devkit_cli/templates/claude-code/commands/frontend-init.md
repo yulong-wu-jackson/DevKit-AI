@@ -16,3 +16,5 @@ you should make sure to use the latest stable version of every techstack (by cro
 Use the shadcn MCP server to browse, search, and install components from registries. (when you want to install components from shadcn/ui) (if you don't have shadcn MCP yet, prompt the user to install one)
 
 Use deepwiki MCP for checking the documents for external libraries (make sure you now how to implement using library before you acturaly start writing) (if you don't have deepwiki MCP yet, prompt the user to install one)
+
+Use playwrite mcp to control the browser and inspect on the layout, structure, and design of the page make make sure a good ui/ux design, and travel through and click and browse around the pages to test out the functionality end to end throughly
