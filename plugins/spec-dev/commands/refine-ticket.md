@@ -99,7 +99,7 @@ You are guiding the user through a structured ticket refinement process. Follow 
      - Task requirements
      - Codebase patterns discovered in Phase 1
      - Best practices
-   - The user can select your recommendation or provide their own answer
+   - The user can select your recommendation or provide their own answer (you should not have any other options)
 
 4. **Question format:** Each question should:
    - Be specific and actionable
