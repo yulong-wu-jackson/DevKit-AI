@@ -39,13 +39,13 @@ You are guiding the user through a structured ticket refinement process. Follow 
    - Consider potential challenges and dependencies
 
 4. **Codebase exploration:**
-   Use the Task tool with `subagent_type: "Explore"` to understand:
+   Use the Task tool with `subagent_type: "general-purpose"` with sonnet model to understand:
    - Relevant existing code patterns and conventions
    - Files and modules that will be affected
    - Related implementations to reference
    - Architectural context and constraints
 
-   Ask the explore agent to trace through code flows relevant to the task.
+   Ask the general-purpose agent to trace through code flows relevant to the task.
    You MUST read and trace through the files that the subagents identified your self, and dive deep on your own if needed, to get accurate information.
 
 5. **Synthesize understanding:**

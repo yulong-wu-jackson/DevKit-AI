@@ -1,0 +1,16 @@
+{
+    "name": "devkit-ai-marketplace",
+    "owner": {
+      "name": "Jackson (Yulong) Wu",
+      "email": "jackson.yl.wu@outlook.com"
+    },
+    "description": "DevKit-AI Marketplace for Claude Code plugins",
+    "plugins": [
+      {
+        "name": "spec-dev",
+        "source": "./plugins/spec-dev",
+        "description": "Specification-driven development workflow with code review and validation"
+      }
+    ]
+  }
+  

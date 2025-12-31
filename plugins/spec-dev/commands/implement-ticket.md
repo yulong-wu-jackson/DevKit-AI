@@ -40,13 +40,13 @@ You are implementing a task following a structured 6-phase workflow. **You must 
    - Consider potential challenges and edge cases
 
 4. **Codebase exploration:**
-   Use the Task tool with `subagent_type: "Explore"` to understand:
+   Use the Task tool with `subagent_type: "general-purpose"` with sonnet model to understand:
    - Relevant existing code patterns and conventions
    - Files and modules that will be affected
    - Related implementations to reference
    - Architectural context and constraints
 
-   Ask the explore agent to trace through code flows relevant to the task.
+   Ask the subagent to trace through code flows relevant to the task.
    **You MUST read and trace through the files that the subagent identifies yourself**, diving deeper as needed to get accurate information.
 
 5. **Synthesize understanding:**
@@ -137,7 +137,7 @@ You are implementing a task following a structured 6-phase workflow. **You must 
 2. **For code changes - invoke code-reviewer subagent:**
 
    Use the Task tool to launch the `spec-dev:code-reviewer` agent with:
-   - The original task description or ticket file path
+   - The original task description and ticket file path (You MUST provide the ticket file path if exist and you must let the subagent to confirm the changes fulfill the goal and Acceptance Criteria in the ticket file)
    - Current date for reference
    - Instruction to review unstaged changes (`git diff`)
 
@@ -145,7 +145,7 @@ You are implementing a task following a structured 6-phase workflow. **You must 
    ```
    Review the code changes for this task:
 
-   Original requirement: [task description or ticket path]
+   Original requirement: [task description / ticket path]
    Date: [current date]
 
    Review the unstaged changes from `git diff`. Verify:
