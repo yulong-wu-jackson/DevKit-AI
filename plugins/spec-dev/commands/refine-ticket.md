@@ -1,12 +1,13 @@
 ---
-description: Refine and clarify a task into a well-structured ticket specification
+description: Refine a task into well-structured ticket(s), splitting complex tasks into ordered sequences
 argument-hint: [task-description or path/to/existing-ticket.md]
-allowed-tools: Read, Glob, Grep, LS, Task, AskUserQuestion, Write, Edit, Bash(ls:*), Bash(mkdir:*), Bash(cat:*), Bash(wc:*)
+allowed-tools: "*"
 ---
 
 <!--
 Ticket Refinement Workflow
 - Transforms vague tasks into actionable, well-specified tickets
+- Automatically splits complex tasks into ordered ticket sequences
 - Creates tickets in .spec-dev/tickets/ with sequential numbering
 - Can refine existing tickets in workspace or create new from external files
 -->
@@ -52,6 +53,20 @@ You are guiding the user through a structured ticket refinement process. Follow 
    - List the key areas of the codebase involved
    - Identify integration points and dependencies
 
+6. **Assess complexity for multi-ticket splitting:**
+   Evaluate if the task should be split into multiple ordered tickets. Consider:
+   - Can it be broken into distinct, sequential phases?
+   - Are there natural boundaries (e.g., data model → API → UI)?
+   - Would a single ticket be too large to implement in one session?
+   - Are there hard dependencies where one part must complete before another?
+
+   **If splitting is clearly warranted**, draft a preliminary breakdown:
+   - Identify reasonable logical sub-tickets
+   - Define the implementation order and dependencies
+   - Note what each sub-ticket would cover
+
+   This will be confirmed with the user in Phase 2.
+
 ---
 
 ## Phase 2: Clarifying Questions
@@ -60,7 +75,14 @@ You are guiding the user through a structured ticket refinement process. Follow 
 
 **Actions:**
 
-1. **Identify underspecified aspects:** Consider gaps in:
+1. **Confirm multi-ticket split (if applicable):**
+   If you identified in Phase 1 that the task should be split into multiple tickets:
+   - Present your recommended breakdown to the user
+   - Use `AskUserQuestion` to confirm:
+     - First option: Your recommended split with brief rationale
+     - User can accept, modify, or choose single ticket
+
+2. **Identify underspecified aspects:** Consider gaps in:
    - Edge cases and error handling
    - Integration points with existing code
    - Scope boundaries
@@ -71,7 +93,7 @@ You are guiding the user through a structured ticket refinement process. Follow 
    - User experience details
    - Any other task-specific concerns
 
-2. **Formulate questions:** For each ambiguity:
+3. **Formulate questions:** For each ambiguity:
    - Use the `AskUserQuestion` tool
    - Provide your best recommendation as the first option based on:
      - Task requirements
@@ -79,20 +101,20 @@ You are guiding the user through a structured ticket refinement process. Follow 
      - Best practices
    - The user can select your recommendation or provide their own answer
 
-3. **Question format:** Each question should:
+4. **Question format:** Each question should:
    - Be specific and actionable
    - Include context for why it matters
    - Offer only ONE well-reasoned default recommendation
 
-4. **Iterate if needed:** If user answers reveal new ambiguities, ask follow-up questions.
+5. **Iterate if needed:** If user answers reveal new ambiguities, ask follow-up questions.
 
-5. **Document decisions:** Track all clarifications for the ticket.
+6. **Document decisions:** Track all clarifications for the ticket(s).
 
 ---
 
 ## Phase 3: Draft Ticket File
 
-**Goal:** Create a well-structured, actionable ticket specification.
+**Goal:** Create well-structured, actionable ticket specification.
 
 **Actions:**
 
@@ -134,6 +156,7 @@ You are guiding the user through a structured ticket refinement process. Follow 
 
    **Created:** [YYYY-MM-DD HH:MM]
    **Status:** Draft
+
 
    ## Overview
    [1-2 sentence summary of what needs to be done and why]
@@ -189,13 +212,13 @@ You are guiding the user through a structured ticket refinement process. Follow 
 
 1. **Confirm creation:** State what was created/updated:
    - Ticket file path
-   - Brief summary of the ticket content
+   - Brief summary of each ticket's content
 
 2. **Display key points:**
-   - 2-3 bullet summary of the refined task
+   - 2-3 bullet summary of the refined task(s)
    - Key decisions made during clarification
 
-3. **Next steps:** Inform the user:
+3. **Inform the user:**
 
    > Ticket saved to: `.spec-dev/tickets/[filename]`
    >
@@ -214,4 +237,6 @@ You are guiding the user through a structured ticket refinement process. Follow 
 - **Ask questions proactively.** Better to clarify upfront than assume incorrectly.
 - **Adapt the ticket structure.** Remove sections that don't apply; add sections if needed.
 - **Keep tickets focused.** One ticket = one coherent unit of work.
+- **Split large tasks.** If a task clearly spans multiple domains or phases, create ordered tickets.
 - **Respect existing work.** When refining existing tickets, preserve valuable context.
+- **Document dependencies.** For multi-ticket sequences, clearly indicate order and blockers.
