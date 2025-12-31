@@ -39,7 +39,7 @@ You are guiding the user through a structured ticket refinement process. Follow 
    - Consider potential challenges and dependencies
 
 4. **Codebase exploration:**
-   Use the Task tool with `subagent_type: "general-purpose"` with sonnet model to understand:
+   Invoke subagent with sonnet model to understand:
    - Relevant existing code patterns and conventions
    - Files and modules that will be affected
    - Related implementations to reference
