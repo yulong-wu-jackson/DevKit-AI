@@ -110,9 +110,11 @@ You are implementing a task following a structured 6-phase workflow. **You must 
    - If tests fail, fix the issues before continuing
 
 4. **Self-verification:**
+   - MUST go to the ticket file and read it fully and go through the check box one by one
    - Verify the implementation meets the requirements
    - Check that no unnecessary changes were introduced
    - Try out the code yourself, ensure the code compiles/runs without errors
+   - If the output is satisfied, then check to complete the check box in the ticket
 
 **Important constraints:**
 - Do NOT add unnecessary comments or docstrings to unchanged code

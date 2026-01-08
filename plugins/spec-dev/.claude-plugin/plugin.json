@@ -1,6 +1,6 @@
 {
   "name": "spec-dev",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Specification-driven development workflow with code review and validation",
   "author": {
     "name": "Jackson (Yulong) Wu",
