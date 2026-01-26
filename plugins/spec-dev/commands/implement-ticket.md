@@ -110,7 +110,7 @@ You are implementing a task following a structured 6-phase workflow. **You must 
    - If tests fail, fix the issues before continuing
 
 4. **Self-verification:**
-   - MUST go to the ticket file and read it fully and go through the check box one by one
+   - MUST go to the ticket file and read it fully and go through the check box one by one (do not check boxes yet, they should only be marked after the code review phase)
    - Verify the implementation meets the requirements
    - Check that no unnecessary changes were introduced
    - Try out the code yourself, ensure the code compiles/runs without errors
@@ -151,7 +151,7 @@ You are implementing a task following a structured 6-phase workflow. **You must 
    Date: [current date]
 
    Review the unstaged changes from `git diff`. Verify:
-   - Implementation aligns with the requirements
+   - Implementation aligns with the requirements (MUST read the ticket file fully and verify each checkbox requirement; mark boxes as complete only after passing review)
    - No bugs, security issues, or logic errors
    - Code follows project conventions
    - No missing requirements from the task

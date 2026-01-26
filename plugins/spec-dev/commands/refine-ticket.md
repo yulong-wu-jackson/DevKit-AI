@@ -95,7 +95,7 @@ You are guiding the user through a structured ticket refinement process. Follow 
 
 3. **Formulate questions:** For each ambiguity:
    - Use the `AskUserQuestion` tool
-   - Provide your best recommendation as the first option based on:
+   - Provide your best recommendation as the first and only one option based on:
      - Task requirements
      - Codebase patterns discovered in Phase 1
      - Best practices
@@ -196,10 +196,10 @@ You are guiding the user through a structured ticket refinement process. Follow 
    The structure may varies and should adaptive to specific codebase and tasks.
 
 5. **Content guidelines:**
-   - Be concise but include necessary details
+   - Be concise but include necessary details (should not include over specific code details)
    - Use clear, actionable language
    - Preserve all clarification decisions
-   - Make it readable and scannable for human
+   - Make it readable and eye scannable for human
    - Adapt structure to fit the specific task (remove unused sections)
 
 ---
